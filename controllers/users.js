@@ -1,5 +1,6 @@
 /*eslint-env es6*/
 const UserModel = require('../models/user.js');
+const bcrypt = require('bcrypt');
 
 
 module.exports.getUsers = (req, res) => {
@@ -60,15 +61,17 @@ module.exports.updateAvatar = (req, res) => {
 };
 
 module.exports.createUser = (req, res) => {
-  const { name, about, avatar } = req.body;
-
-  UserModel.create({ name, about, avatar })
-    .then(user => res.send({ data: user }))
-    .catch((err) => {
-      if (err.name === "ValidationError") {
-        res.status(400).send({ message: "Переданы некорректные данные" });
-      } else {
-        res.status(500).send({ message: "Ошибка сервера" });
-      }
-    });
+  bcrypt.hash(req.body.password, 10)
+  .then((hash) => {
+  const { name, about, avatar, email} = req.body;
+  return UserModel.create({ name, about, avatar, email, password: hash })
+  })
+  .then(user => res.send({ data: user }))
+  .catch((err) => {
+    if (err.name === "ValidationError") {
+      res.status(400).send({ message: "Переданы некорректные данные" });
+    } else {
+      res.status(500).send({ message: "Ошибка сервера" });
+    }
+  });
 };
