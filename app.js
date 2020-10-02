@@ -5,6 +5,8 @@ const rateLimit = require("express-rate-limit");
 const bodyParser = require('body-parser');
 const routeCards = require('./routes/cards.js');
 const routeUsers = require('./routes/users.js');
+const {login} = require('./controllers/users.js');
+const {createUser} = require('./controllers/users.js');
 
 const { PORT = 3000 } = process.env;
 const app = express();
@@ -29,6 +31,8 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
   useFindAndModify: false,
 });
 
+app.post('/signin', login);
+app.post('/signup', createUser); 
 app.use('/users', routeUsers);
 app.use('/cards', routeCards);
 app.use((req, res) => {

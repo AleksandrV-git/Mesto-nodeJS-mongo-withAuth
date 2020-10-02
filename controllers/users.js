@@ -1,6 +1,7 @@
 /*eslint-env es6*/
 const UserModel = require('../models/user.js');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 
 module.exports.getUsers = (req, res) => {
@@ -62,16 +63,35 @@ module.exports.updateAvatar = (req, res) => {
 
 module.exports.createUser = (req, res) => {
   bcrypt.hash(req.body.password, 10)
-  .then((hash) => {
-  const { name, about, avatar, email} = req.body;
-  return UserModel.create({ name, about, avatar, email, password: hash })
-  })
-  .then(user => res.send({ data: user }))
-  .catch((err) => {
-    if (err.name === "ValidationError") {
-      res.status(400).send({ message: "Переданы некорректные данные" });
-    } else {
-      res.status(500).send({ message: "Ошибка сервера" });
-    }
-  });
+    .then((hash) => {
+      const { name, about, avatar, email } = req.body;
+      return UserModel.create({ name, about, avatar, email, password: hash })
+    })
+    .then(user => res.send({ data: user }))
+    .catch((err) => {
+      if (err.name === "ValidationError") {
+        res.status(400).send({ message: "Переданы некорректные данные" });
+      } else {
+        res.status(500).send({ message: "Ошибка сервера" });
+      }
+    });
 };
+
+module.exports.login = (req, res) => {
+  const { email, password } = req.body;
+
+  return UserModel.findUserByCredentials(email, password)
+    .then((user) => {
+      // создадим токен
+      const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
+      // вернём токен
+      res.cookie('jwt', token, { maxAge: 3600000 * 24 * 7, httpOnly: true }).end();
+    })
+    .catch((err) => {
+      if (err.message === "Неправильные почта или пароль") {
+        res.status(401).send({ message: err.message });
+      } else {
+        res.status(500).send({ message: "Ошибка сервера" });
+      }  
+    });
+}; 
