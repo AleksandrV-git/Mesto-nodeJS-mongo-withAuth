@@ -1,4 +1,4 @@
-# Mesto_NodeJS
+# Mesto-nodeJS-mongo-withAuth
 Версия 0.0.1
 
 ## О проекте:
@@ -8,6 +8,7 @@
 ## Основной функционал:
 - Обработка запросов
 - работа с базой данных MongoDB
+- Аутентификация и авторизация пользователей
 
 ## Стэк технологий:
 NodeJS, express, REST API
@@ -22,6 +23,9 @@ NodeJS, express, REST API
   - "body-parser": "^1.19.0",
   - "mongoose": "^5.10.7"
   - "express-rate-limit": "^5.1.3"
+  - "jsonwebtoken": "^8.5.1"
+  - "validator": "^13.1.17"
+  - "bcrypt": "^5.0.0"
 
 ## Инструкции по запуску:
 - Скачать или склонировать репозиторий
