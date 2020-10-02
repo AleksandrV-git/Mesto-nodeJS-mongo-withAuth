@@ -25,11 +25,11 @@ module.exports.getUserById = (req, res) => {
 
 module.exports.updateUser = (req, res) => {
   const { name, about } = req.body;
-  let paramObj = {};
-  if (name) { paramObj.name = name; }
-  if (about) { paramObj.about = about; }
+  let paramsObj = {};
+  if (name) { paramsObj.name = name; }
+  if (about) { paramsObj.about = about; }
 
-  UserModel.findByIdAndUpdate(req.params._id, paramObj, {
+  UserModel.findByIdAndUpdate(req.user._id, paramsObj, {
     new: true, // обработчик then получит на вход обновлённую запись
     runValidators: true, // данные будут валидированы перед изменением
   })
@@ -46,7 +46,7 @@ module.exports.updateUser = (req, res) => {
 module.exports.updateAvatar = (req, res) => {
   const { avatar } = req.body;
 
-  UserModel.findByIdAndUpdate(req.params._id, { avatar }, {
+  UserModel.findByIdAndUpdate(req.user._id, { avatar }, {
     new: true, // обработчик then получит на вход обновлённую запись
     runValidators: true, // данные будут валидированы перед изменением
   })
