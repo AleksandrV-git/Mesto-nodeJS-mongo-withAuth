@@ -62,13 +62,15 @@ module.exports.updateAvatar = (req, res) => {
 };
 
 module.exports.createUser = (req, res) => {
-  const {email, password, name, about, avatar} = req.body;
+  let { password } = req.body;
   if (!password || password.length < 8 || /\s/.test(password)) {
-    const password = null;
+    
     return res.status(400).send({ message: 'некорректный пароль' });
   }
+  password = null;
   bcrypt.hash(req.body.password, 10)
     .then((hash) => {
+      const {email, name, about, avatar} = req.body;
       return UserModel.create({ name, about, avatar, email, password: hash })
     })
     .then((user) => {
