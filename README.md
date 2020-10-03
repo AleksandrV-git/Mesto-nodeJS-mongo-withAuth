@@ -26,6 +26,7 @@ NodeJS, express, REST API
   - "jsonwebtoken": "^8.5.1"
   - "validator": "^13.1.17"
   - "bcrypt": "^5.0.0"
+  - "mongoose-unique-validator": "^2.0.3"
 
 ## Инструкции по запуску:
 - Скачать или склонировать репозиторий

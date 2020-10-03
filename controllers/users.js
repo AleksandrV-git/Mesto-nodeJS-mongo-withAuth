@@ -62,13 +62,22 @@ module.exports.updateAvatar = (req, res) => {
 };
 
 module.exports.createUser = (req, res) => {
+  const {email, password, name, about, avatar} = req.body;
+  if (!password || password.length < 8 || /\s/.test(password)) {
+    const password = null;
+    return res.status(400).send({ message: 'некорректный пароль' });
+  }
   bcrypt.hash(req.body.password, 10)
     .then((hash) => {
-      const { name, about, avatar, email } = req.body;
       return UserModel.create({ name, about, avatar, email, password: hash })
     })
-    .then(user => res.send({ data: user }))
+    .then((user) => {
+      const { name, about, avatar, email, _id } = user
+      res.send({ data: { name, about, avatar, email, _id } })})
     .catch((err) => {
+      if (err.errors.email.message === 'Error, expected value to be unique.') {
+        res.status(409).send({ message: "Переданы некорректные данные" });
+      }
       if (err.name === "ValidationError") {
         res.status(400).send({ message: "Переданы некорректные данные" });
       } else {
@@ -85,7 +94,7 @@ module.exports.login = (req, res) => {
       // создадим токен
       const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
       // вернём токен
-      res.cookie('jwt', token, { maxAge: 3600000 * 24 * 7, httpOnly: true }).end();
+      res.cookie('jwt', token, { maxAge: 3600000 * 24 * 7, httpOnly: true, sameSite: true}).end();
     })
     .catch((err) => {
       if (err.message === "Неправильные почта или пароль") {

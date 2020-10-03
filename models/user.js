@@ -1,6 +1,7 @@
 /*eslint-env es6*/
 const mongoose = require('mongoose');
 const isEmail = require('validator/lib/isEmail');
+const uniqueValidator = require('mongoose-unique-validator')
 const bcrypt = require('bcrypt');
 
 const userSchema = new mongoose.Schema({
@@ -42,6 +43,8 @@ const userSchema = new mongoose.Schema({
     select: false
   },
 });
+
+userSchema.plugin(uniqueValidator, { message: 'Error, expected value to be unique.' });
 
 userSchema.statics.findUserByCredentials = function (email, password) {
   return this.findOne({ email }).select('+password')
