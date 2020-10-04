@@ -8,9 +8,16 @@ module.exports.getCards = (req, res) => {
 };
 
 module.exports.DeleteCardById = (req, res) => {
-  cardModel.findByIdAndRemove(req.params.cardId)
+  cardModel.findById(req.params.cardId)
     .orFail(new Error('not found'))
-    .then(card => res.send({ data: card }))
+    .then((card) => {
+      if (String(card.owner) !== req.user._id) {
+        res.status(403).send({ message: 'Вы не можете удалять карточки других пользователей' });
+        return;
+      }
+      cardModel.remove();
+      res.send({ data: card });
+    })
     .catch((err) => {
       if (err.message === "not found") {
         res.status(404).send({ message: "Запрашиваемый ресурс не найден" });
@@ -35,7 +42,7 @@ module.exports.createCard = (req, res) => {
     });
 };
 
-module.exports.likeCard = (req, res) => 
+module.exports.likeCard = (req, res) =>
   cardModel.findByIdAndUpdate(
     req.params.cardId,
     { $addToSet: { likes: req.user._id } }, // добавить _id в массив, если его там нет
