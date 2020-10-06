@@ -27,6 +27,7 @@ NodeJS, express, REST API
   - "validator": "^13.1.17"
   - "bcrypt": "^5.0.0"
   - "mongoose-unique-validator": "^2.0.3"
+  - "cookie-parser": "^1.4.5"
 
 ## Инструкции по запуску:
 - Скачать или склонировать репозиторий
