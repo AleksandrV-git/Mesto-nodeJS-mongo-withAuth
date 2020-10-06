@@ -3,6 +3,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const rateLimit = require("express-rate-limit");
 const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
 
 const routeCards = require('./routes/cards.js');
 const routeUsers = require('./routes/users.js');
@@ -19,6 +20,7 @@ const limiter = rateLimit({
 app.use(limiter);
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cookieParser());
 
 mongoose.connect('mongodb://localhost:27017/mestodb', {
   useNewUrlParser: true,
